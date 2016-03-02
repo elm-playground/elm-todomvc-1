@@ -59,6 +59,11 @@ toggleTask model id =
     { model | tasks = List.map updateTask model.tasks }
 
 
+removeTask : Model -> Int -> Model
+removeTask model id =
+  { model | tasks = List.filter (\t -> t.id /= id) model.tasks }
+
+
 view : Signal.Address Model -> Model -> Html
 view address model =
   let
@@ -73,6 +78,9 @@ view address model =
         , span
             [ classList [ ("strikethrough", task.completed) ] ]
             [ text task.desc ]
+        , button
+            [ onClick address <| removeTask model task.id ]
+            [ text "x" ]
         ]
 
     items = List.map item model.tasks
