@@ -1,3 +1,4 @@
+import Graphics.Element exposing (show)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import String
@@ -39,8 +40,10 @@ view address model =
           , autofocus True
           ]
           []
-      , text <| "Hello, " ++ model.field ++ "!"
       , ul [] items
+
+      -- useful for debugging purposes
+      , fromElement (show model)
       ]
 
 
