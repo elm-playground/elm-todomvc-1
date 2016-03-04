@@ -69,18 +69,27 @@ view address model =
   let
     item task =
       li []
-        [ input
-            [ type' "checkbox"
-            , checked task.completed
-            , onClick address <| toggleTask model task.id
+        [ div
+            [ classList
+                [ ("task", True)
+                , ("is-completed", task.completed)
+                ]
             ]
-            []
-        , span
-            [ classList [ ("strikethrough", task.completed) ] ]
-            [ text task.desc ]
-        , button
-            [ onClick address <| removeTask model task.id ]
-            [ text "x" ]
+            [ input
+                [ type' "checkbox"
+                , checked task.completed
+                , onClick address <| toggleTask model task.id
+                ]
+                []
+            , span
+                [ class "task__description" ]
+                [ text task.desc ]
+            , button
+                [ class "task__remove-button"
+                , onClick address <| removeTask model task.id
+                ]
+                [ text "x" ]
+            ]
         ]
 
     items = List.map item model.tasks
