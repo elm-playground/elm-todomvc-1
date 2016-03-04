@@ -66,47 +66,58 @@ removeTask model id =
 
 view : Signal.Address Model -> Model -> Html
 view address model =
-  let
-    item task =
-      li []
-        [ div
-            [ classList
-                [ ("task", True)
-                , ("is-completed", task.completed)
-                ]
-            ]
-            [ input
-                [ type' "checkbox"
-                , checked task.completed
-                , onClick address <| toggleTask model task.id
-                ]
-                []
-            , span
-                [ class "task__description" ]
-                [ text task.desc ]
-            , button
-                [ class "task__remove-button"
-                , onClick address <| removeTask model task.id
-                ]
-                [ text "x" ]
-            ]
-        ]
+  div []
+    [ taskEntry address model
+    , taskList address model
 
+    -- useful for debugging purposes
+    , fromElement (show model)
+    ]
+
+
+taskEntry : Signal.Address Model -> Model -> Html
+taskEntry address model =
+  input
+    [ onInput address <| updateField model
+    , onEnter address <| addTask model
+    , value model.field
+    , autofocus True
+    ]
+    []
+
+
+taskList : Signal.Address Model -> Model -> Html
+taskList address model =
+  let
+    item task = li [] [ taskView address model task ]
     items = List.map item model.tasks
   in
-    div []
-      [ input
-          [ onInput address <| updateField model
-          , onEnter address <| addTask model
-          , value model.field
-          , autofocus True
-          ]
-          []
-      , ul [] items
+    ul [] items
 
-      -- useful for debugging purposes
-      , fromElement (show model)
-      ]
+
+taskView : Signal.Address Model -> Model -> Task -> Html
+taskView address model task =
+  div
+    [ classList
+        [ ("task", True)
+        , ("is-completed", task.completed)
+        ]
+    ]
+    [ input
+        [ type' "checkbox"
+        , checked task.completed
+        , onClick address <| toggleTask model task.id
+        ]
+        []
+    , span
+        [ class "task__description" ]
+        [ text task.desc ]
+    , button
+        [ class "task__remove-button"
+        , onClick address <| removeTask model task.id
+        ]
+        [ text "x" ]
+    ]
 
 
 main : Signal Html
