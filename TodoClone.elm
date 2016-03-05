@@ -27,11 +27,30 @@ updateField model string =
   { model | field = string }
 
 
+newTask : String -> Int -> Task
+newTask desc id =
+  { desc = desc
+  , completed = False
+  , id = id
+  }
+
+
+addTask : Model -> Model
+addTask model =
+  { model
+    | uid = model.uid + 1
+    , field = ""
+    , tasks = model.tasks ++ [ newTask model.field model.uid ]
+  }
+
+
 inputText : Signal.Address Model -> Model -> Html
 inputText address model =
   input
     [ type' "text"
     , onInput address (updateField model)
+    , onEnter address (addTask model)
+    , value model.field
     ]
     []
 
