@@ -1,4 +1,4 @@
-module Todo where
+module Todo (..) where
 
 import Graphics.Element exposing (show)
 import Html exposing (..)
@@ -38,15 +38,16 @@ updateField model field =
 addTask : Model -> Model
 addTask model =
   let
-    desc = String.trim model.field
+    desc =
+      String.trim model.field
   in
     if String.isEmpty desc then
       model
     else
       { model
-      | uid = model.uid + 1
-      , field = ""
-      , tasks = model.tasks ++ [ newTask desc model.uid ]
+        | uid = model.uid + 1
+        , field = ""
+        , tasks = model.tasks ++ [ newTask desc model.uid ]
       }
 
 
@@ -54,7 +55,10 @@ toggleTask : Model -> Int -> Model
 toggleTask model id =
   let
     updateTask t =
-      if t.id == id then { t | completed = not t.completed } else t
+      if t.id == id then
+        { t | completed = not t.completed }
+      else
+        t
   in
     { model | tasks = List.map updateTask model.tasks }
 
@@ -66,11 +70,11 @@ removeTask model id =
 
 view : Signal.Address Model -> Model -> Html
 view address model =
-  div []
+  div
+    []
     [ taskEntry address model
     , taskList address model
-
-    -- useful for debugging purposes
+      -- useful for debugging purposes
     , fromElement (show model)
     ]
 
@@ -89,8 +93,11 @@ taskEntry address model =
 taskList : Signal.Address Model -> Model -> Html
 taskList address model =
   let
-    item task = li [] [ taskView address model task ]
-    items = List.map item model.tasks
+    item task =
+      li [] [ taskView address model task ]
+
+    items =
+      List.map item model.tasks
   in
     ul [] items
 
@@ -99,8 +106,8 @@ taskView : Signal.Address Model -> Model -> Task -> Html
 taskView address model task =
   div
     [ classList
-        [ ("task", True)
-        , ("is-completed", task.completed)
+        [ ( "task", True )
+        , ( "is-completed", task.completed )
         ]
     ]
     [ input
@@ -123,6 +130,7 @@ taskView address model task =
 main : Signal Html
 main =
   let
-    inbox = Signal.mailbox { tasks = [], field = "", uid = 0 }
+    inbox =
+      Signal.mailbox { tasks = [], field = "", uid = 0 }
   in
     Signal.map (view inbox.address) inbox.signal
